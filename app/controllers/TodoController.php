@@ -54,7 +54,11 @@ class TodoController
     // DELETE /todos/{id}
     public function destroy(?string $id): void
     {
-        
+        $todo = $this->model->find((int) $id);
+        if (!$todo) {
+        Response::json(['error' => 'Not found'], 404);
+        return;
+    }
         $this->model->delete((int) $id);
         Response::json(['message' => 'Gelöscht (Soft Delete)']);
     }
