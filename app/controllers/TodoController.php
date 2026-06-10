@@ -31,6 +31,7 @@ class TodoController
 
         if (empty($data['title'])) {
             Response::json(['error' => 'Title ist Pflicht'], 422);
+            return; // defensive Programmierung sonst geht die Methode weiter
         }
 
         $id = $this->model->create($data);
