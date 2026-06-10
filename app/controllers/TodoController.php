@@ -40,15 +40,21 @@ class TodoController
 
     // PUT /todos/{id}
     public function update(?string $id): void
-    {
-        $data = json_decode(file_get_contents('php://input'), true);
-        $this->model->update((int) $id, $data);
-        Response::json(['message' => 'Aktualisiert']);
+{
+    $todo = $this->model->find((int) $id);
+    if (!$todo) {
+        Response::json(['error' => 'Not found'], 404);
+        return;
     }
+    $data = json_decode(file_get_contents('php://input'), true);
+    $this->model->update((int) $id, $data);
+    Response::json(['message' => 'Aktualisiert']);
+}
 
     // DELETE /todos/{id}
     public function destroy(?string $id): void
     {
+        
         $this->model->delete((int) $id);
         Response::json(['message' => 'Gelöscht (Soft Delete)']);
     }
