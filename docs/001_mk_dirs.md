@@ -5,6 +5,6 @@ cd "%PROJECT%"
 mkdir app data config include public docs css js test
 
 cd app
-mkdir models views controllers helpers 
+mkdir models views controllers helpers middlerware
 
 echo Projektstruktur erstellt: %PROJECT%
