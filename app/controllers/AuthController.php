@@ -50,7 +50,7 @@ class AuthController
         $payload = [
             'user_id' => $user['id'],
             'role'    => $user['role'],
-            'exp'     => time() + (int) $_ENV['JWT_EXPIRY']
+            'exp'     => time() + (int) $_ENV['JWT_EXPIRY'] //'exp 'Registered Claim Name
         ];
 
         $token = JWT::encode($payload, $_ENV['JWT_SECRET'], 'HS256');//HS256 ist der Signaturalgorithmus
