@@ -9,3 +9,7 @@ test/003_front_controller.php
 config/database.php
 vendor
 .env
+debug.log
+docs/Router_setAuthUser_ctrl_helper.php
+docs/User_findById_method.php
+
