@@ -19,7 +19,7 @@ class AuthController
 
         // Validierung //request control
         if (empty($data['name']) || empty($data['lastname'])|| empty($data['email']) || empty($data['password'])) {
-            Response::json(['error' => 'username, email und password sind Pflicht'], 422);
+            Response::json(['error' => 'email und password sind Pflicht'], 422);
             return;
         }
 
@@ -59,7 +59,6 @@ class AuthController
             'token' => $token,
             'user'  => [
                 'id'       => $user['id'],
-                'username' => $user['username'],
                 'role'     => $user['role']
             ]
         ]);
