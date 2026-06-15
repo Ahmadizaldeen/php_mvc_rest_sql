@@ -1,25 +1,26 @@
 <?php
-#declare(strict_types=1);
+declare(strict_types=1);
 
 class TodoController
 {
-    private Todo $model;
+    private Todo $todo;
+    private ?object $authUser = null; // user_id
 
     public function __construct()
     {
-        $this->model = new Todo();
+        $this->todo = new Todo();
     }
 
     // GET /todos
     public function index(): void
     {
-        Response::json($this->model->all());
+        Response::json($this->todo->all($this->userId()));
     }
 
     // GET /todos/{id}
     public function show(?string $id): void
     {
-        $todo = $this->model->find((int) $id);
+        $todo = $this->todo->find((int) $id, $this->userId());
         $todo ? Response::json($todo) : Response::json(['error' => 'Not found'], 404);
     }
 
@@ -34,7 +35,7 @@ class TodoController
             return; // defensive Programmierung sonst geht die Methode weiter
         }
 
-        $id = $this->model->create($data);
+        $id = $this->todo->create($data, $this->userId());
         Response::json(['message' => 'Erstellt', 'id' => $id], 201);
     }
 
@@ -42,25 +43,37 @@ class TodoController
     // PUT /todos/{id}
     public function update(?string $id): void
     {
-        $todo = $this->model->find((int) $id);
+        $todo = $this->todo->find((int) $id, $this->userId());
         if (!$todo) {
             Response::json(['error' => 'Not found'], 404);
             return;
         }
         $data = json_decode(file_get_contents('php://input'), true);
-        $this->model->update((int) $id, $data);
+        $this->todo->update((int) $id, $data, $this->userId());
         Response::json(['message' => 'Aktualisiert']);
     }
 
     // DELETE /todos/{id}
     public function destroy(?string $id): void
     {
-        $todo = $this->model->find((int) $id);
+        $todo = $this->todo->find((int) $id, $this->userId());
         if (!$todo) {
             Response::json(['error' => 'Not found'], 404);
             return;
         }
-        $this->model->delete((int) $id);
+        $this->todo->delete((int) $id, $this->userId());
         Response::json(['message' => 'Gelöscht (Soft Delete)']);
+    }
+
+    // Router ruft das auf und übergibt den JWT Payload
+    public function setAuthUser(?object $authUser): void
+    {
+        $this->authUser = $authUser;
+    }
+
+    // Hilfsmethode — user_id sauber auslesen
+    private function userId(): int
+    {
+        return (int) $this->authUser->user_id;
     }
 }

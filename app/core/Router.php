@@ -18,6 +18,11 @@ class Router
     private function registerRoutes(): void
     {
         $this->routes = [
+            // Auth — öffentlich
+            ['POST', 'auth/register', 'AuthController', 'register'],
+            ['POST', 'auth/login',    'AuthController', 'login'],
+
+            // Todos — geschützt
             ['GET',    'todos',      'TodoController', 'index'],
             ['GET',    'todos/{id}', 'TodoController', 'show'],
             ['POST',   'todos',      'TodoController', 'store'],
@@ -28,6 +33,8 @@ class Router
 
     public function dispatch(): void
     {
+        // JWT prüfen — gibt null (öffentlich) oder Payload (geschützt) zurück
+        $authUser = AuthMiddleware::handle($this->method, $this->uri);
         foreach ($this->routes as [$method, $pattern, $controller, $action]) {
 
             // {id} im Pattern → in Regex umwandeln
@@ -36,6 +43,10 @@ class Router
             if ($this->method === $method && preg_match($regex, $this->uri, $matches)) {
                 $id = $matches[1] ?? null;
                 $ctrl = new $controller();
+                // Auth-User dem Controller übergeben
+                if (method_exists($ctrl, 'setAuthUser')) {
+                    $ctrl->setAuthUser($authUser);
+                }
                 $ctrl->$action($id);
                 return;
             }
