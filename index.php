@@ -5,7 +5,7 @@ use Dotenv\Dotenv;
 require_once __DIR__ .'/vendor/autoload.php';
 $dotenv = Dotenv::createImmutable(__DIR__);// .env suchen in __DIR__
 $dotenv->load(); // Variable jetzt in $_ENV['']  zugreifbar
-print_r ($_ENV);
+#print_r ($_ENV);
 
 require_once __DIR__ ."/app/helpers/bootstrap.php";
 require_once __DIR__ . '/app/core/Database.php';
